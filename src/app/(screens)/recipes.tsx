@@ -1,18 +1,22 @@
-"use client"
-
 import { useState, useEffect, useContext } from "react"
-import {View,Text,FlatList,StyleSheet,TextInput,TouchableOpacity,Image,ActivityIndicator,Dimensions,SafeAreaView,StatusBar} from "react-native"
+import { View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity, Image, ActivityIndicator, SafeAreaView, StatusBar } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { Link } from "expo-router"
-import { isFavorite, saveFavorite, removeFavorite } from "../Utils/favorite"
-import { RecipesContext } from "../context/recipecontext"
+import { useRouter } from "expo-router"
+import { RecipesContext } from "../../context/recipecontext"
 import { Ionicons } from "@expo/vector-icons"
 
-const { width } = Dimensions.get("window")
-const numColumns = width > 500 ? 2 : 1
+const numColumns = 1
 
 export default function Recipes() {
-  const { recipes, searchRecipes, fetchAllRecipes } = useContext(RecipesContext)
+  const router = useRouter()
+  const { 
+    recipes, 
+    searchRecipes, 
+    fetchAllRecipes,
+    isFavorite,
+    saveFavorite,
+    removeFavorite
+  } = useContext(RecipesContext)
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
   const [favorites, setFavorites] = useState<{ [id: number]: boolean }>({})
@@ -57,69 +61,82 @@ export default function Recipes() {
     setFavorites((prev) => ({ ...prev, [recipe.id]: !isFav }))
   }
 
-  const renderRecipeCard = ({ item, index }) => (
+  const handlePressRecipe = (id: number) => {
+    router.push(`/recipes/${id}`)
+  }
+
+  const handlePressHome = () => {
+    router.push("/")
+  }
+
+  const renderRecipeCard = ({ item, index }: { item: any; index: number }) => (
     <View style={[styles.recipeCard, { marginRight: numColumns > 1 && index % numColumns === 0 ? 12 : 0 }]}>
-      <Link href={`/recipes/${item.id}`} asChild>
-        <TouchableOpacity style={styles.cardContent} activeOpacity={0.9}>
-          <LinearGradient colors={["#FFFDE7", "#FFF9C4", "#FFECB3"]} style={styles.cardGradient}>
-            <View style={styles.imageContainer}>
-              <Image source={{ uri: item.image }} style={styles.recipeImage} resizeMode="cover" />
+      <TouchableOpacity 
+        style={styles.cardContent} 
+        activeOpacity={0.9}
+        onPress={() => handlePressRecipe(item.id)}
+      >
+        <LinearGradient colors={["#fff9f0", "#fdebd0", "#facf7d"]} style={styles.cardGradient}>
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: item.image }} style={styles.recipeImage} resizeMode="cover" />
+            <LinearGradient
+              colors={["transparent", "rgba(250,207,125,0.1)", "rgba(233,148,30,0.8)"]}
+              style={styles.imageGradient}
+            />
+            <TouchableOpacity 
+              style={styles.favoriteButton} 
+              onPress={() => toggleFavorite(item)}
+            >
               <LinearGradient
-                colors={["transparent", "rgba(255,193,7,0.1)", "rgba(255,152,0,0.8)"]}
-                style={styles.imageGradient}
-              />
-              <TouchableOpacity style={styles.favoriteButton} onPress={() => toggleFavorite(item)}>
-                <LinearGradient
-                  colors={
-                    favorites[item.id] ? ["#FF6B6B", "#E91E63"] : ["rgba(255,255,255,0.95)", "rgba(255,249,196,0.9)"]
-                  }
-                  style={styles.favoriteGradient}
-                >
-                  <Ionicons
-                    name={favorites[item.id] ? "heart" : "heart-outline"}
-                    size={22}
-                    color={favorites[item.id] ? "#fff" : "#FF8F00"}
-                  />
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.recipeInfo}>
-              <Text style={styles.recipeName} numberOfLines={2}>
-                {item.name}
-              </Text>
-              <View style={styles.recipeTag}>
-                <LinearGradient colors={["#8BC34A", "#AED581"]} style={styles.tagGradient}>
-                  <Ionicons name="leaf" size={14} color="#fff" />
-                  <Text style={styles.tagText}>Fresco</Text>
-                </LinearGradient>
-              </View>
-            </View>
-          </LinearGradient>
-        </TouchableOpacity>
-      </Link>
+                colors={
+                  favorites[item.id] ? ["#ff7e5f", "#feb47b"] : ["rgba(255,255,255,0.95)", "rgba(250,207,125,0.9)"]
+                }
+                style={styles.favoriteGradient}
+              >
+                <Ionicons
+                  name={favorites[item.id] ? "heart" : "heart-outline"}
+                  size={22}
+                  color={favorites[item.id] ? "#fff" : "#e9941e"}
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.recipeInfo}>
+            <Text style={styles.recipeName} numberOfLines={2}>
+              {item.name}
+            </Text>
+          </View>
+        </LinearGradient>
+      </TouchableOpacity>
     </View>
   )
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFDE7" />
-      <LinearGradient colors={["#FFFDE7", "#FFF9C4", "#FFECB3"]} style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff9f0" />
+      <LinearGradient colors={["#fff9f0", "#fdebd0", "#facf7d"]} style={styles.container}>
         <View style={styles.searchWrapper}>
-          <LinearGradient colors={["#FFFFFF", "#FFFDE7"]} style={styles.searchContainer}>
-            <LinearGradient colors={["#FFB74D", "#FF9800"]} style={styles.searchIconContainer}>
+          <TouchableOpacity 
+            style={styles.homeButton} 
+            onPress={handlePressHome}
+          >
+            <Ionicons name="home-outline" size={30} color="#e9941e" />
+          </TouchableOpacity>
+          <LinearGradient colors={["#FFFFFF", "#fff9f0"]} style={styles.searchContainer}>
+            <LinearGradient colors={["#f5b461", "#e9941e"]} style={styles.searchIconContainer}>
               <Ionicons name="search" size={20} color="#fff" />
             </LinearGradient>
             <TextInput
               style={styles.searchInput}
-              placeholder="Buscar receitas deliciosas..."
-              placeholderTextColor="#A1887F"
+              placeholder="Buscar receitas"
+              placeholderTextColor="#a1887f"
               value={search}
               onChangeText={setSearch}
               onSubmitEditing={handleSearch}
             />
             {search.length > 0 && (
               <TouchableOpacity onPress={() => setSearch("")} style={styles.clearButton}>
-                <LinearGradient colors={["#FF8A80", "#FF5722"]} style={styles.clearGradient}>
+                <LinearGradient colors={["#ff9a8b", "#ff6b6b"]} style={styles.clearGradient}>
                   <Ionicons name="close" size={16} color="#fff" />
                 </LinearGradient>
               </TouchableOpacity>
@@ -129,19 +146,19 @@ export default function Recipes() {
 
         {loading ? (
           <View style={styles.loadingContainer}>
-            <LinearGradient colors={["#FFD54F", "#FFCA28"]} style={styles.loadingSpinner}>
+            <LinearGradient colors={["#f5b461", "#e9941e"]} style={styles.loadingSpinner}>
               <ActivityIndicator size="large" color="#fff" />
             </LinearGradient>
             <Text style={styles.loadingText}>Preparando delícias...</Text>
           </View>
         ) : recipes.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <LinearGradient colors={["#FFE082", "#FFCC02"]} style={styles.emptyIcon}>
+            <LinearGradient colors={["#f5b461", "#e9941e"]} style={styles.emptyIcon}>
               <Ionicons name="restaurant-outline" size={40} color="#fff" />
             </LinearGradient>
             <Text style={styles.noResults}>Nenhuma receita encontrada</Text>
             <TouchableOpacity onPress={loadRecipes}>
-              <LinearGradient colors={["#8BC34A", "#AED581"]} style={styles.refreshButton}>
+              <LinearGradient colors={["#e9941e", "#f5b461"]} style={styles.refreshButton}>
                 <Ionicons name="refresh" size={20} color="#fff" style={styles.refreshIcon} />
                 <Text style={styles.refreshButtonText}>Recarregar Receitas</Text>
               </LinearGradient>
@@ -153,7 +170,7 @@ export default function Recipes() {
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderRecipeCard}
             numColumns={numColumns}
-            key={numColumns}
+            key={numColumns} 
             contentContainerStyle={styles.recipeList}
             showsVerticalScrollIndicator={false}
           />
@@ -166,51 +183,24 @@ export default function Recipes() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: "#fff9f0",
   },
   container: {
     flex: 1,
   },
-  headerGradient: {
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingVertical: 25,
-  },
-  headerContent: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerIcon: {
-    marginRight: 15,
-    textShadowColor: "rgba(0,0,0,0.3)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-  headerTitle: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    textShadowColor: "rgba(0,0,0,0.3)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.9)",
-    fontStyle: "italic",
-  },
   searchWrapper: {
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff9f0",
+  },
+  homeButton: {
+    padding: 5,
+    marginRight: 10,
   },
   searchContainer: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 25,
@@ -308,22 +298,6 @@ const styles = StyleSheet.create({
     color: "#5D4037",
     marginBottom: 8,
     lineHeight: 24,
-  },
-  recipeTag: {
-    alignSelf: "flex-start",
-  },
-  tagGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-  },
-  tagText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
-    marginLeft: 4,
   },
   loadingContainer: {
     flex: 1,

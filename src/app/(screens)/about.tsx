@@ -1,89 +1,89 @@
-import { View, Text, StyleSheet, SafeAreaView, StatusBar, ScrollView } from "react-native"
+import { View, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { Ionicons } from "@expo/vector-icons"
 
 export default function About() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFDE7" />
-      <LinearGradient colors={["#FFFDE7", "#FFF9C4", "#FFECB3"]} style={styles.container}>
-        <LinearGradient colors={["#FFD54F", "#FFCA28", "#FFC107"]} style={styles.headerGradient}>
+      <LinearGradient 
+        colors={["#fff9f0", "#fdebd0", "#facf7d"]} 
+        style={styles.container}
+      >
+        <LinearGradient 
+          colors={["#facf7d", "#f5b461", "#e9941e"]} 
+          style={styles.headerGradient}
+        >
           <View style={styles.header}>
-            <View style={styles.headerContent}>
-              <LinearGradient colors={["#FFFFFF", "#FFFDE7"]} style={styles.logoContainer}>
-                <Ionicons name="restaurant" size={40} color="#FF8F00" />
-              </LinearGradient>
-              <View style={styles.headerText}>
-                <Text style={styles.headerTitle}>Chef's Kitchen</Text>
-                <Text style={styles.headerSubtitle}>Sobre o aplicativo</Text>
-              </View>
+            <LinearGradient 
+              colors={["#FFFFFF", "#fff9f0"]} 
+              style={styles.logoContainer}
+            >
+              <Ionicons name="restaurant" size={40} color="#e9941e" />
+            </LinearGradient>
+            <View style={styles.headerText}>
+              <Text style={styles.headerTitle}>Chef's Kitchen</Text>
+              <Text style={styles.headerSubtitle}>Sobre o aplicativo</Text>
             </View>
           </View>
         </LinearGradient>
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <LinearGradient colors={["#FFFFFF", "#FFFDE7"]} style={styles.mainCard}>
+        <ScrollView style={styles.content}>
+          <LinearGradient 
+            colors={["#FFFFFF", "#fff9f0"]} 
+            style={styles.card}
+          >
             <View style={styles.cardHeader}>
-              <LinearGradient colors={["#8BC34A", "#AED581"]} style={styles.cardIcon}>
+              <LinearGradient 
+                colors={["#f5b461", "#e9941e"]} 
+                style={styles.iconContainer}
+              >
                 <Ionicons name="information-circle" size={24} color="#fff" />
               </LinearGradient>
               <Text style={styles.cardTitle}>Sobre o App de Receitas</Text>
             </View>
 
             <Text style={styles.description}>
-              Um aplicativo que foi criado para ajudar os usuários a encontrar receitas de diferentes tipos de pratos.
+              Um aplicativo criado para ajudar os usuários a encontrar receitas de diferentes tipos de pratos.
             </Text>
-
-            <View style={styles.featuresContainer}>
-              <View style={styles.featureItem}>
-                <LinearGradient colors={["#FFB74D", "#FF9800"]} style={styles.featureIcon}>
-                  <Ionicons name="search" size={20} color="#fff" />
-                </LinearGradient>
-                <View style={styles.featureText}>
-                  <Text style={styles.featureTitle}>Busca Inteligente</Text>
-                  <Text style={styles.featureDescription}>Encontre receitas por ingredientes ou nome</Text>
-                </View>
-              </View>
-
-              <View style={styles.featureItem}>
-                <LinearGradient colors={["#FF6B6B", "#E91E63"]} style={styles.featureIcon}>
-                  <Ionicons name="heart" size={20} color="#fff" />
-                </LinearGradient>
-                <View style={styles.featureText}>
-                  <Text style={styles.featureTitle}>Favoritos</Text>
-                  <Text style={styles.featureDescription}>Salve suas receitas preferidas</Text>
-                </View>
-              </View>
-            </View>
           </LinearGradient>
 
-          <LinearGradient colors={["#FFFFFF", "#FFF8E1"]} style={styles.apiCard}>
+          <LinearGradient 
+            colors={["#FFFFFF", "#fff9f0"]} 
+            style={styles.card}
+          >
             <View style={styles.cardHeader}>
-              <LinearGradient colors={["#FF8A65", "#FF7043"]} style={styles.cardIcon}>
+              <LinearGradient 
+                colors={["#f5b461", "#e9941e"]} 
+                style={styles.iconContainer}
+              >
                 <Ionicons name="cloud" size={24} color="#fff" />
               </LinearGradient>
               <Text style={styles.cardTitle}>Fonte dos Dados</Text>
             </View>
 
-            <Text style={styles.apiDescription}>
-              Utilizamos a API do DummyJSON para fornecer uma variedade incrível de receitas para todos os gostos,
-              ocasiões e níveis de habilidade culinária.
+            <Text style={styles.description}>
+              Utilizamos a API do DummyJSON para fornecer nossa variedade de receitas.
             </Text>
 
-            <LinearGradient colors={["#E3F2FD", "#BBDEFB"]} style={styles.apiInfo}>
-              <Ionicons name="server" size={20} color="#1976D2" />
+            <View style={styles.apiInfo}>
+              <Ionicons name="server" size={20} color="#e9941e" />
               <Text style={styles.apiText}>API: DummyJSON Recipes</Text>
-            </LinearGradient>
+            </View>
           </LinearGradient>
 
-          <LinearGradient colors={["#E1F5FE", "#B3E5FC"]} style={styles.developerCard}>
+          <LinearGradient 
+            colors={["#FFFFFF", "#fff9f0"]} 
+            style={styles.card}
+          >
             <View style={styles.cardHeader}>
-              <LinearGradient colors={["#29B6F6", "#0288D1"]} style={styles.cardIcon}>
+              <LinearGradient 
+                colors={["#f5b461", "#e9941e"]} 
+                style={styles.iconContainer}
+              >
                 <Ionicons name="person" size={24} color="#fff" />
               </LinearGradient>
               <Text style={styles.cardTitle}>Desenvolvedor</Text>
             </View>
-
             <Text style={styles.developerName}>Guilherme Silva Rios</Text>
           </LinearGradient>
         </ScrollView>
@@ -95,6 +95,7 @@ export default function About() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: "#fff9f0",
   },
   container: {
     flex: 1,
@@ -102,6 +103,8 @@ const styles = StyleSheet.create({
   headerGradient: {
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
+    paddingVertical: 25,
+    paddingHorizontal: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -109,10 +112,6 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 25,
-  },
-  headerContent: {
     flexDirection: "row",
     alignItems: "center",
   },
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
   },
-  mainCard: {
+  card: {
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
@@ -165,7 +164,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
-  cardIcon: {
+  iconContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -213,48 +212,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#8D6E63",
   },
-  apiCard: {
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  apiDescription: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#5D4037",
-    marginBottom: 16,
-    textAlign: "justify",
-  },
   apiInfo: {
     flexDirection: "row",
     alignItems: "center",
     padding: 12,
     borderRadius: 12,
+    backgroundColor: "#fff0e1",
   },
   apiText: {
     marginLeft: 8,
     fontSize: 14,
     fontWeight: "600",
-    color: "#1976D2",
-  },
-  developerCard: {
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
+    color: "#5D4037",
   },
   developerName: {
     fontSize: 18,
-    color: "#1565C0",
+    color: "#e9941e",
     fontWeight: "600",
     textAlign: "center",
   },

@@ -1,57 +1,57 @@
-"use client"
-
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, Dimensions } from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { Link } from "expo-router"
+import { useRouter } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 
-const { width, height } = Dimensions.get("window")
-
 export default function Home() {
+  const router = useRouter();
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor="#FFD54F" />
-      <LinearGradient colors={["#FFD54F", "#FFCA28", "#FFC107"]} style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff9f0" />
+      <LinearGradient colors={["#fff9f0", "#fdebd0", "#facf7d"]} style={styles.container}>
         <View style={styles.decorativeElements}>
           <LinearGradient
-            colors={["rgba(255,255,255,0.1)", "rgba(255,255,255,0.05)"]}
+            colors={["rgba(233,148,30,0.1)", "rgba(233,148,30,0.05)"]}
             style={[styles.circle, styles.circle1]}
           />
           <LinearGradient
-            colors={["rgba(255,255,255,0.08)", "rgba(255,255,255,0.03)"]}
+            colors={["rgba(233,148,30,0.08)", "rgba(233,148,30,0.03)"]}
             style={[styles.circle, styles.circle2]}
           />
           <LinearGradient
-            colors={["rgba(255,255,255,0.06)", "rgba(255,255,255,0.02)"]}
+            colors={["rgba(233,148,30,0.06)", "rgba(233,148,30,0.02)"]}
             style={[styles.circle, styles.circle3]}
           />
         </View>
 
         <View style={styles.content}>
           <View style={styles.logoSection}>
-            <LinearGradient colors={["#FFFFFF", "#FFFDE7"]} style={styles.logoContainer}>
-              <Ionicons name="restaurant" size={60} color="#FF8F00" />
+            <LinearGradient colors={["#FFFFFF", "#fff9f0"]} style={styles.logoContainer}>
+              <Ionicons name="restaurant" size={60} color="#e9941e" />
             </LinearGradient>
             <Text style={styles.appName}>Chef's Kitchen</Text>
           </View>
           <View style={styles.welcomeSection}>
             <Text style={styles.title}>Bem-vindo ao mundo dos sabores!</Text>
             <Text style={styles.subtitle}>
-              Descubra receitas deliciosas de todo o mundo e transforme sua cozinha em um verdadeiro laboratório
+              Descubra receitas deliciosas e transforme sua cozinha em um verdadeiro laboratório
               gastronômico
             </Text>
           </View>
 
           <View style={styles.actionSection}>
-            <Link href="/(screens)/recipes" asChild>
-              <TouchableOpacity style={styles.primaryButton} activeOpacity={0.8}>
-                <LinearGradient colors={["#4CAF50", "#66BB6A"]} style={styles.buttonGradient}>
-                  <Ionicons name="restaurant-outline" size={24} color="#fff" style={styles.buttonIcon} />
-                  <Text style={styles.primaryButtonText}>Explorar Receitas</Text>
-                  <Ionicons name="arrow-forward" size={20} color="#fff" />
-                </LinearGradient>
-              </TouchableOpacity>
-            </Link>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              activeOpacity={0.8}
+              onPress={() => router.push("/(screens)/recipes")}
+            >
+              <LinearGradient colors={["#f5b461", "#e9941e"]} style={styles.buttonGradient}>
+                <Ionicons name="restaurant-outline" size={24} color="#fff" style={styles.buttonIcon} />
+                <Text style={styles.primaryButtonText}>Explorar Receitas</Text>
+                <Ionicons name="arrow-forward" size={20} color="#fff" />
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
         </View>
       </LinearGradient>
@@ -62,6 +62,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: "#fff9f0",
   },
   container: {
     flex: 1,
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   circle3: {
     width: 100,
     height: 100,
-    top: height * 0.3,
+    top: 200,
     right: 20,
   },
   content: {
@@ -120,10 +121,10 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#FFFFFF",
-    textShadowColor: "rgba(0,0,0,0.3)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    color: "#e9941e",
+    textShadowColor: "rgba(0,0,0,0.1)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   welcomeSection: {
     alignItems: "center",
@@ -132,21 +133,22 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: "#5D4037",
     textAlign: "center",
     marginBottom: 12,
-    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowColor: "rgba(233,148,30,0.15)",
     textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
+    textShadowRadius: 2,
     lineHeight: 32,
   },
   subtitle: {
     fontSize: 16,
-    color: "rgba(255,255,255,0.9)",
+    color: "#8D6E63",
     textAlign: "center",
     lineHeight: 24,
     paddingHorizontal: 10,
   },
+
   featuresPreview: {
     alignItems: "center",
   },
@@ -174,11 +176,12 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 14,
-    color: "rgba(255,255,255,0.9)",
+    color: "#8D6E63",
     fontWeight: "600",
   },
   actionSection: {
     gap: 16,
+    marginBottom: 20,
   },
   primaryButton: {
     borderRadius: 16,
@@ -250,20 +253,20 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#FFFFFF",
-    textShadowColor: "rgba(0,0,0,0.3)",
+    color: "#e9941e",
+    textShadowColor: "rgba(0,0,0,0.1)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
   statLabel: {
     fontSize: 12,
-    color: "rgba(255,255,255,0.8)",
+    color: "#8D6E63",
     marginTop: 2,
     fontWeight: "500",
   },
   statDivider: {
     width: 1,
     height: 30,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: "rgba(233,148,30,0.3)",
   },
 })

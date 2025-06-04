@@ -1,56 +1,95 @@
 import { useState, useEffect, useContext } from "react"
-import {View,Text,StyleSheet,Image,ScrollView,TouchableOpacity,SafeAreaView,StatusBar,ActivityIndicator,} from "react-native"
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, SafeAreaView, StatusBar, ActivityIndicator } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { useLocalSearchParams } from "expo-router"
-import { isFavorite, saveFavorite, removeFavorite } from "../../Utils/favorite"
-import { RecipesContext } from "../../context/recipecontext"
+import { useLocalSearchParams, useRouter } from "expo-router"
+import { RecipesContext } from "../../../context/recipecontext"
 import { Ionicons } from "@expo/vector-icons"
+
+type Recipe = {
+  id: number;
+  name: string;
+  ingredients: string[];
+  instructions: string | string[];
+  image: string;
+};
 
 export default function RecipeDetails() {
   const { id } = useLocalSearchParams()
-  const { selectedRecipe, getRecipeById } = useContext(RecipesContext)
+  const { 
+    getRecipeById,
+    isFavorite,
+    saveFavorite,
+    removeFavorite
+  } = useContext(RecipesContext)
+  
+  const [recipeData, setRecipeData] = useState<Recipe | null>(null)
   const [isFav, setIsFav] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     if (id) {
       const recipeId = Number(id)
-      getRecipeById(recipeId).then(() => {
-        isFavorite(recipeId).then(setIsFav)
-        setLoading(false)
-      })
+      loadRecipe(recipeId)
+    } else {
+        setIsLoading(false) 
     }
   }, [id])
 
-  const toggleFavorite = async () => {
-    if (!selectedRecipe) return
+  const loadRecipe = async (recipeId: number) => {
+    try {
+      setIsLoading(true)
+      const fetchedRecipe = await getRecipeById(recipeId)
+      setRecipeData(fetchedRecipe)
 
-    if (isFav) {
-      await removeFavorite(selectedRecipe.id)
-    } else {
-      await saveFavorite(selectedRecipe)
+      if (fetchedRecipe) {
+        const favoriteStatus = await isFavorite(fetchedRecipe.id)
+        setIsFav(favoriteStatus)
+      }
+    } catch (error) {
+      console.error("Erro ao carregar receita:", error)
+      setRecipeData(null)
+    } finally {
+      setIsLoading(false)
     }
-    setIsFav(!isFav)
   }
 
-  if (loading) {
+  const toggleFavorite = async () => {
+    if (!recipeData) return
+
+    try {
+      if (isFav) {
+        await removeFavorite(recipeData.id)
+      } else {
+        await saveFavorite(recipeData)
+      }
+      setIsFav(!isFav)
+    } catch (error) {
+      console.error("Erro ao atualizar favorito:", error)
+    }
+  }
+
+  if (isLoading) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <LinearGradient colors={["#FFFDE7", "#FFF9C4", "#FFECB3"]} style={styles.loadingContainer}>
-          <LinearGradient colors={["#FFD54F", "#FFCA28"]} style={styles.loadingSpinner}>
-            <ActivityIndicator size="large" color="#fff" />
-          </LinearGradient>
-          <Text style={styles.loadingText}>Preparando receita...</Text>
+        <LinearGradient colors={["#FFFDE7", "#FFF9C4", "#FFECB3"]} style={[styles.container, styles.loadingContainer]}>
+          <ActivityIndicator size="large" color="#FF8F00" />
+          <Text style={styles.loadingText}>Carregando receita...</Text>
         </LinearGradient>
       </SafeAreaView>
     )
   }
 
-  if (!selectedRecipe) {
+  if (!recipeData) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <LinearGradient colors={["#FFFDE7", "#FFF9C4", "#FFECB3"]} style={styles.container}>
+        <LinearGradient colors={["#FFFDE7", "#FFF9C4", "#FFECB3"]} style={[styles.container, styles.loadingContainer]}>
           <Text style={styles.errorText}>Receita não encontrada</Text>
+          <TouchableOpacity onPress={() => router.back()} style={styles.errorBackButton}>
+            <LinearGradient colors={["#FFD54F", "#FFCA28"]} style={styles.errorBackButtonGradient}>
+             <Text style={styles.backButtonText}>Voltar</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </LinearGradient>
       </SafeAreaView>
     )
@@ -60,9 +99,15 @@ export default function RecipeDetails() {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFDE7" />
       <LinearGradient colors={["#FFFDE7", "#FFF9C4", "#FFECB3"]} style={styles.container}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <LinearGradient colors={["rgba(255,255,255,0.9)", "rgba(255,249,196,0.8)"]} style={styles.backButtonGradient}>
+            <Ionicons name="arrow-back-outline" size={28} color="#FF8F00" />
+          </LinearGradient>
+        </TouchableOpacity>
+        
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.imageContainer}>
-            <Image source={{ uri: selectedRecipe.image }} style={styles.image} resizeMode="cover" />
+            <Image source={{ uri: recipeData.image }} style={styles.image} resizeMode="cover" />
             <LinearGradient
               colors={["transparent", "rgba(255,193,7,0.1)", "rgba(255,152,0,0.6)"]}
               style={styles.imageGradient}
@@ -79,17 +124,7 @@ export default function RecipeDetails() {
 
           <LinearGradient colors={["#FFFFFF", "#FFFDE7"]} style={styles.contentContainer}>
             <View style={styles.header}>
-              <Text style={styles.title}>{selectedRecipe.name}</Text>
-              <View style={styles.headerTags}>
-                <LinearGradient colors={["#8BC34A", "#AED581"]} style={styles.tag}>
-                  <Ionicons name="leaf" size={14} color="#fff" />
-                  <Text style={styles.tagText}>Fresco</Text>
-                </LinearGradient>
-                <LinearGradient colors={["#FFB74D", "#FF9800"]} style={styles.tag}>
-                  <Ionicons name="flame" size={14} color="#fff" />
-                  <Text style={styles.tagText}>Fácil</Text>
-                </LinearGradient>
-              </View>
+              <Text style={styles.title}>{recipeData.name}</Text>
             </View>
 
             <LinearGradient colors={["#FFFFFF", "#FFF8E1"]} style={styles.section}>
@@ -100,7 +135,7 @@ export default function RecipeDetails() {
                 <Text style={styles.sectionTitle}>Ingredientes</Text>
               </View>
               <View style={styles.ingredientsList}>
-                {selectedRecipe.ingredients.map((ingredient: string, index: number) => (
+                {recipeData.ingredients.map((ingredient: string, index: number) => (
                   <View key={index} style={styles.ingredientItem}>
                     <LinearGradient colors={["#8BC34A", "#AED581"]} style={styles.ingredientBullet} />
                     <Text style={styles.ingredientText}>{ingredient}</Text>
@@ -117,8 +152,8 @@ export default function RecipeDetails() {
                 <Text style={styles.sectionTitle}>Modo de Preparo</Text>
               </View>
               <View style={styles.instructionsList}>
-                {Array.isArray(selectedRecipe.instructions)
-                  ? selectedRecipe.instructions.map((instruction: string, index: number) => (
+                {Array.isArray(recipeData.instructions)
+                  ? recipeData.instructions.map((instruction: string, index: number) => (
                       <View key={index} style={styles.instructionItem}>
                         <LinearGradient colors={["#FFD54F", "#FFCA28"]} style={styles.stepNumber}>
                           <Text style={styles.stepNumberText}>{index + 1}</Text>
@@ -131,7 +166,7 @@ export default function RecipeDetails() {
                         <LinearGradient colors={["#FFD54F", "#FFCA28"]} style={styles.stepNumber}>
                           <Text style={styles.stepNumberText}>1</Text>
                         </LinearGradient>
-                        <Text style={styles.instructionText}>{selectedRecipe.instructions}</Text>
+                        <Text style={styles.instructionText}>{recipeData.instructions}</Text>
                       </View>
                     )}
               </View>
@@ -146,38 +181,72 @@ export default function RecipeDetails() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: "#FFFDE7",
   },
   container: {
     flex: 1,
   },
   loadingContainer: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  loadingSpinner: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
   },
   loadingText: {
     fontSize: 18,
     color: "#8D6E63",
     fontWeight: "500",
+    marginTop: 20,
   },
   errorText: {
     fontSize: 18,
     color: "#8D6E63",
+    fontWeight: "500",
+    marginBottom: 20,
     textAlign: "center",
-    marginTop: 50,
+  },
+  errorBackButton: {
+    marginTop: 20,
+    borderRadius: 25,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  errorBackButtonGradient: {
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backButtonText: {
+    color: "#5D4037",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  backButton: {
+    position: 'absolute',
+    top: (StatusBar.currentHeight || 0) + 15,
+    left: 20,
+    zIndex: 10,
+    borderRadius: 25,
+    overflow: 'hidden',
+    elevation: 5,
+     shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  backButtonGradient: {
+    padding: 10,
+    borderRadius: 25,
   },
   imageContainer: {
     position: "relative",
     height: 300,
-    margin: 20,
+    marginHorizontal: 20,
+    marginTop: (StatusBar.currentHeight || 0) + 70,
     marginBottom: 0,
     borderRadius: 24,
     overflow: "hidden",
@@ -204,15 +273,24 @@ const styles = StyleSheet.create({
     right: 20,
     borderRadius: 25,
     overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   favoriteGradient: {
     padding: 12,
     borderRadius: 25,
   },
   contentContainer: {
-    margin: 20,
-    marginTop: 10,
-    borderRadius: 24,
+    marginHorizontal: 20,
+    marginTop: -20,
+    paddingTop: 30,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    backgroundColor: '#FFFFFF',
+    marginBottom: 20,
     padding: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -222,6 +300,7 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 20,
+    alignItems: 'center',
   },
   title: {
     fontSize: 28,
@@ -229,23 +308,7 @@ const styles = StyleSheet.create({
     color: "#5D4037",
     marginBottom: 12,
     lineHeight: 34,
-  },
-  headerTags: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  tag: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-  },
-  tagText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
-    marginLeft: 4,
+    textAlign: 'center',
   },
   section: {
     marginBottom: 20,
