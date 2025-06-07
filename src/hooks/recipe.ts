@@ -1,10 +1,10 @@
-import { useContext, useEffect } from "react";
+import { useContext} from "react";
 import { RecipesContext } from "../context/recipecontext";
 
-export const useAuth = () => {
+export const useRecipe = () => {
   const context = useContext(RecipesContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('DEUUU PAU');
   }
   return context;
 }

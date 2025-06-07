@@ -1,15 +1,9 @@
-import React, {createContext,PropsWithChildren,useEffect,useState,} from 'react';
+import React, { createContext, PropsWithChildren, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Recipe } from '../types/recipe';
 
 const FAVORITES_KEY = '@favorites';
 
-type Recipe = {
-  id: number;
-  name: string;
-  ingredients: string[];
-  instructions: string | string[];
-  image: string;
-};
 
 type RecipesContextProps = {
   recipes: Recipe[];
@@ -20,7 +14,7 @@ type RecipesContextProps = {
   getFavorites: () => Promise<Recipe[]>;
   saveFavorite: (recipe: Recipe) => Promise<void>;
   removeFavorite: (id: number) => Promise<void>;
-  isFavorite: (id: number) => Promise<boolean>;
+  isFavorite: (id: number) => boolean;
 };
 
 export const RecipesContext = createContext<RecipesContextProps>(
@@ -115,14 +109,8 @@ export const RecipesProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const isFavorite = async (id: number): Promise<boolean> => {
-    try {
-      const currentFavorites = await getFavorites();
-      return currentFavorites.some((item: Recipe) => item.id === id);
-    } catch (e) {
-      console.error('Erro ao verificar favorito:', e);
-      return false;
-    }
+  const isFavorite = (id: number): boolean => {
+    return favorites.some((item: Recipe) => item.id === id);
   };
 
   return (

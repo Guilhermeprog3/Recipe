@@ -1,8 +1,12 @@
-import { View, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import { Ionicons } from "@expo/vector-icons"
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Linking } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function About() {
+  const openPortfolio = () => {
+    Linking.openURL("https://guilhermeriosdev.vercel.app");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <LinearGradient 
@@ -85,11 +89,24 @@ export default function About() {
               <Text style={styles.cardTitle}>Desenvolvedor</Text>
             </View>
             <Text style={styles.developerName}>Guilherme Silva Rios</Text>
+            
+            <TouchableOpacity 
+              style={styles.portfolioButton} 
+              onPress={openPortfolio}
+            >
+              <LinearGradient 
+                colors={["#f5b461", "#e9941e"]} 
+                style={styles.portfolioGradient}
+              >
+                <Ionicons name="globe-outline" size={20} color="#fff" style={styles.portfolioIcon} />
+                <Text style={styles.portfolioText}>guilhermeriosdev.vercel.app</Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </LinearGradient>
         </ScrollView>
       </LinearGradient>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -184,34 +201,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "justify",
   },
-  featuresContainer: {
-    gap: 16,
-  },
-  featureItem: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  featureIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  featureText: {
-    flex: 1,
-  },
-  featureTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#5D4037",
-    marginBottom: 2,
-  },
-  featureDescription: {
-    fontSize: 14,
-    color: "#8D6E63",
-  },
   apiInfo: {
     flexDirection: "row",
     alignItems: "center",
@@ -230,5 +219,26 @@ const styles = StyleSheet.create({
     color: "#e9941e",
     fontWeight: "600",
     textAlign: "center",
+    marginBottom: 15,
   },
-})
+  portfolioButton: {
+    marginTop: 10,
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+  portfolioGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+  },
+  portfolioIcon: {
+    marginRight: 10,
+  },
+  portfolioText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+});
