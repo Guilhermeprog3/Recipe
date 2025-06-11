@@ -110,7 +110,7 @@ export default function RecipeDetails() {
             <View style={styles.recipeMeta}>
               <View style={styles.metaItem}>
                 <FontAwesome5 name="clock" size={14} color="#fff" />
-                <Text style={styles.metaText}>30 min</Text>
+                <Text style={styles.metaText}>{recipeData.prepTimeMinutes} Minutos</Text>
               </View>
             </View>
           </View>
