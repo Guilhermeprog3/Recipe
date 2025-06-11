@@ -10,20 +10,12 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#757575',
         tabBarStyle: {
           backgroundColor: '#FFF8E1',
-          borderTopWidth: 0,
-          elevation: 10,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -3 },
-          shadowOpacity: 0.1,
-          shadowRadius: 3,
           height: 60,
           paddingBottom: 6,
           paddingTop: 6,
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '600',
-          marginBottom: 4,
         },
       }}
     >

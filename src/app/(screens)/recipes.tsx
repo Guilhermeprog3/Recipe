@@ -10,60 +10,68 @@ import { Recipe } from "@/src/types/recipe";
 export default function Recipes() {
   const router = useRouter();
   const { 
-    recipes, 
-    searchRecipes, 
     fetchAllRecipes,
+    searchRecipes,
     isFavorite,
     saveFavorite,
     removeFavorite
   } = useContext(RecipesContext);
   
   const [search, setSearch] = useState("");
-  const [favorites, setFavorites] = useState<{ [id: number]: boolean }>({});
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
+  const [favorites, setFavorites] = useState<{ [id: number]: boolean }>({});
+  const [isLoading, setIsLoading] = useState(true);
 
-  const loadFavorites = useCallback(async () => {
-    const favStatus: { [id: number]: boolean } = {};
-    for (const recipe of filteredRecipes) {
-      favStatus[recipe.id] = await isFavorite(recipe.id);
-    }
-    setFavorites(favStatus);
-  }, [filteredRecipes, isFavorite]);
-
-  useEffect(() => {
-    const initializeData = async () => {
-      await fetchAllRecipes();
-      setFilteredRecipes(recipes);
-    };
-    initializeData();
-  }, []);
-
-  useEffect(() => {
-    setFilteredRecipes(recipes);
-  }, [recipes]);
-
-  useFocusEffect(
-    useCallback(() => {
-      loadFavorites();
-    }, [loadFavorites])
-  );
-
-  const handleSearch = async () => {
-    if (search.trim() === "") {
-      await fetchAllRecipes();
-    } else {
-      await searchRecipes(search);
+useEffect(() => {
+  const loadRecipes = async () => {
+    try {
+      setIsLoading(true);
+      const data = search.trim() === "" 
+        ? await fetchAllRecipes() 
+        : await searchRecipes(search.trim());
+      
+      setFilteredRecipes(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Erro na busca:", error);
+      setFilteredRecipes([]);
+    } finally {
+      setIsLoading(false);
     }
   };
+  loadRecipes();
+}, [search]);
+
+useFocusEffect(
+  useCallback(() => {
+    const loadFavorites = async () => {
+      try {
+        const status = await Promise.all(
+          filteredRecipes.map(async recipe => ({
+            [recipe.id]: await isFavorite(recipe.id)
+          }))
+        );
+        setFavorites(Object.assign({}, ...status));
+      } catch (error) {
+        console.error("Erro ao carregar favoritos:", error);
+      }
+    };
+    
+    loadFavorites();
+  }, [filteredRecipes, isFavorite])
+);
 
   const toggleFavorite = async (recipe: Recipe) => {
-    const isFav = favorites[recipe.id];
-    if (isFav) {
-      await removeFavorite(recipe.id);
-    } else {
-      await saveFavorite(recipe);
+    try {
+      const isFav = favorites[recipe.id];
+      if (isFav) {
+        await removeFavorite(recipe.id);
+      } else {
+        await saveFavorite(recipe);
+      }
+      setFavorites(prev => ({ ...prev, [recipe.id]: !isFav }));
+    } catch (error) {
+      console.error("Erro ao alternar favorito:", error);
     }
-    setFavorites(prev => ({ ...prev, [recipe.id]: !isFav }));
   };
 
   const handlePressRecipe = (id: number) => {
@@ -91,14 +99,10 @@ export default function Recipes() {
               placeholderTextColor="#a1887f"
               value={search}
               onChangeText={setSearch}
-              onSubmitEditing={handleSearch}
               returnKeyType="search"
             />
             {search.length > 0 && (
-              <TouchableOpacity onPress={() => {
-                setSearch("");
-                fetchAllRecipes();
-              }} style={styles.clearButton}>
+              <TouchableOpacity onPress={() => setSearch("")} style={styles.clearButton}>
                 <LinearGradient colors={["#ff9a8b", "#ff6b6b"]} style={styles.clearGradient}>
                   <Ionicons name="close" size={16} color="#fff" />
                 </LinearGradient>
@@ -107,20 +111,31 @@ export default function Recipes() {
           </LinearGradient>
         </View>
 
-        <FlatList
-          data={filteredRecipes}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <RecipeCard
-              recipe={item}
-              isFavorite={favorites[item.id] || false}
-              onPress={() => handlePressRecipe(item.id)}
-              onToggleFavorite={() => toggleFavorite(item)}
-            />
-          )}
-          contentContainerStyle={styles.recipeList}
-          showsVerticalScrollIndicator={false}
-        />
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Carregando...</Text>
+          </View>
+        ) : filteredRecipes.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="search-outline" size={50} color="#e9941e" />
+            <Text style={styles.emptyText}>Nenhuma receita encontrada</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredRecipes}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <RecipeCard
+                recipe={item}
+                isFavorite={favorites[item.id] || false}
+                onPress={() => handlePressRecipe(item.id)}
+                onToggleFavorite={() => toggleFavorite(item)}
+              />
+            )}
+            contentContainerStyle={styles.recipeList}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </LinearGradient>
     </SafeAreaView>
   );
@@ -198,5 +213,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#e9941e",
     fontWeight: "500",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 18,
+    color: "#e9941e",
   }
 });

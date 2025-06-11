@@ -10,20 +10,6 @@ export default function Home() {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff9f0" />
       <LinearGradient colors={["#fff9f0", "#fdebd0", "#facf7d"]} style={styles.container}>
-        <View style={styles.decorativeElements}>
-          <LinearGradient
-            colors={["rgba(233,148,30,0.1)", "rgba(233,148,30,0.05)"]}
-            style={[styles.circle, styles.circle1]}
-          />
-          <LinearGradient
-            colors={["rgba(233,148,30,0.08)", "rgba(233,148,30,0.03)"]}
-            style={[styles.circle, styles.circle2]}
-          />
-          <LinearGradient
-            colors={["rgba(233,148,30,0.06)", "rgba(233,148,30,0.02)"]}
-            style={[styles.circle, styles.circle3]}
-          />
-        </View>
 
         <View style={styles.content}>
           <View style={styles.logoSection}>
@@ -76,24 +62,6 @@ const styles = StyleSheet.create({
   circle: {
     position: "absolute",
     borderRadius: 1000,
-  },
-  circle1: {
-    width: 200,
-    height: 200,
-    top: -50,
-    right: -50,
-  },
-  circle2: {
-    width: 150,
-    height: 150,
-    bottom: 100,
-    left: -30,
-  },
-  circle3: {
-    width: 100,
-    height: 100,
-    top: 200,
-    right: 20,
   },
   content: {
     flex: 1,

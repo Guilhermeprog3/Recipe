@@ -24,11 +24,9 @@ export default function RecipeDetails() {
   useEffect(() => {
     const loadRecipe = async () => {
       if (!id) return
-      
       const recipeId = Number(id)
       const fetchedRecipe = await getRecipeById(recipeId)
       setRecipeData(fetchedRecipe)
-
       if (fetchedRecipe) {
         const favoriteStatus = await isFavorite(fetchedRecipe.id)
         setIsFav(favoriteStatus)

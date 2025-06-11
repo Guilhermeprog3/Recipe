@@ -1,22 +1,34 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { View, FlatList, SafeAreaView, StatusBar, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { RecipesContext } from "../../context/recipecontext";
 import { RecipeCard } from "../components/card-recipe";
+import { Recipe } from "@/src/types/recipe";
 
 export default function Favorites() {
   const router = useRouter();
-  const { 
-    favorites, 
+  const {  
     getFavorites, 
     removeFavorite,
     isFavorite
   } = useContext(RecipesContext);
+  
+  const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const loadFavoritesData = useCallback(async () => {
-    await getFavorites();
+    try {
+      setLoading(true);
+      const favorites = await getFavorites();
+      setFavoriteRecipes(Array.isArray(favorites) ? favorites : []);
+    } catch (error) {
+      console.error("Error loading favorites:", error);
+      setFavoriteRecipes([]);
+    } finally {
+      setLoading(false);
+    }
   }, [getFavorites]);
 
   useFocusEffect(
@@ -26,13 +38,54 @@ export default function Favorites() {
   );
 
   const handleRemoveFavorite = async (id: number) => {
-    await removeFavorite(id);
-    await loadFavoritesData();
+    try {
+      await removeFavorite(id);
+      await loadFavoritesData();
+    } catch (error) {
+      console.error("Error removing favorite:", error);
+    }
   };
 
   const handlePressRecipe = (id: number) => {
     router.push(`/recipes/${id}`);
   };
+
+  const RenderRecipeItem = ({ item }: { item: Recipe }) => {
+    const [isFav, setIsFav] = useState(true);
+
+    useEffect(() => {
+      const verifyFavorite = async () => {
+        try {
+          const favStatus = await isFavorite(item.id);
+          setIsFav(favStatus);
+        } catch (error) {
+          console.error("Error checking favorite status:", error);
+        }
+      };
+      verifyFavorite();
+    }, [item.id]);
+
+    return (
+      <RecipeCard
+        recipe={item}
+        isFavorite={isFav}
+        onPress={() => handlePressRecipe(item.id)}
+        onToggleFavorite={() => handleRemoveFavorite(item.id)}
+      />
+    );
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <LinearGradient colors={["#fff9f0", "#fdebd0", "#facf7d"]} style={styles.container}>
+          <View style={styles.loadingContainer}>
+            <Text>Carregando favoritos...</Text>
+          </View>
+        </LinearGradient>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -42,24 +95,23 @@ export default function Favorites() {
           <View style={styles.statsContainer}>
             <LinearGradient colors={["#FFFFFF", "#fff9f0"]} style={styles.statsCard}>
               <Ionicons name="heart" size={24} color="#ff7e5f" />
-              <Text style={styles.statsNumber}>{favorites.length}</Text>
+              <Text style={styles.statsNumber}>{favoriteRecipes.length}</Text>
               <Text style={styles.statsLabel}>Receitas Favoritas</Text>
             </LinearGradient>
           </View>
 
           <FlatList
-            data={favorites}
+            data={favoriteRecipes}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <RecipeCard
-                recipe={item}
-                isFavorite={isFavorite(item.id)}
-                onPress={() => handlePressRecipe(item.id)}
-                onToggleFavorite={() => handleRemoveFavorite(item.id)}
-              />
-            )}
+            renderItem={({ item }) => <RenderRecipeItem item={item} />}
             contentContainerStyle={styles.recipeList}
             showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Ionicons name="heart-dislike-outline" size={50} color="#e9941e" />
+                <Text style={styles.emptyText}>Nenhuma receita favoritada</Text>
+              </View>
+            }
           />
         </View>
       </LinearGradient>
@@ -107,5 +159,22 @@ const styles = StyleSheet.create({
   },
   recipeList: {
     paddingBottom: 20,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 100,
+  },
+  emptyText: {
+    marginTop: 16,
+    fontSize: 18,
+    color: "#e9941e",
+    fontWeight: "500",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

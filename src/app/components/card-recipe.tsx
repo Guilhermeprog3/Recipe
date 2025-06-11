@@ -54,14 +54,8 @@ export const RecipeCard = React.memo(({
           <View style={styles.recipeMeta}>
             <Text style={styles.metaText}>{recipe.prepTimeMinutes} min</Text>
             <Text style={styles.metaText}>•</Text>
-            <Text style={styles.metaText}>{recipe.difficulty}</Text>
           </View>
           
-          {recipe.description && (
-            <Text style={styles.recipeDescription} numberOfLines={2}>
-              {recipe.description}
-            </Text>
-          )}
         </View>
       </View>
     </TouchableOpacity>

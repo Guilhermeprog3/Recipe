@@ -4,10 +4,7 @@ import { Recipe } from '../types/recipe';
 
 const FAVORITES_KEY = '@favorites';
 
-
 type RecipesContextProps = {
-  recipes: Recipe[];
-  favorites: Recipe[];
   fetchAllRecipes: () => Promise<void>;
   searchRecipes: (query: string) => Promise<void>;
   getRecipeById: (id: number) => Promise<Recipe | null>;
@@ -22,19 +19,13 @@ export const RecipesContext = createContext<RecipesContextProps>(
 );
 
 export const RecipesProvider = ({ children }: PropsWithChildren) => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [favorites, setFavorites] = useState<Recipe[]>([]);
-
-  useEffect(() => {
-    fetchAllRecipes();
-    loadFavorites();
-  }, []);
 
   async function fetchAllRecipes() {
     try {
       const response = await fetch('https://dummyjson.com/recipes');
       const data = await response.json();
-      setRecipes(data.recipes);
+      return data.recipes;
     } catch (error) {
       console.error('Erro ao buscar receitas:', error);
     }
@@ -44,7 +35,7 @@ export const RecipesProvider = ({ children }: PropsWithChildren) => {
     try {
       const response = await fetch(`https://dummyjson.com/recipes/search?q=${query}`);
       const data = await response.json();
-      setRecipes(data.recipes);
+      return data.recipes;
     } catch (error) {
       console.error('Erro ao buscar receitas com filtro:', error);
     }
@@ -53,10 +44,6 @@ export const RecipesProvider = ({ children }: PropsWithChildren) => {
   async function getRecipeById(id: number): Promise<Recipe | null> {
     try {
       const response = await fetch(`https://dummyjson.com/recipes/${id}`);
-      if (!response.ok) {
-        console.error(`Error fetching recipe ${id}: ${response.status}`);
-        return null;
-      }
       const data = await response.json();
       return data as Recipe;
     } catch (error) {
@@ -65,21 +52,13 @@ export const RecipesProvider = ({ children }: PropsWithChildren) => {
     }
   }
 
-  const loadFavorites = async () => {
-    try {
-      const favs = await getFavorites();
-      setFavorites(favs);
-    } catch (error) {
-      console.error('Erro ao carregar favoritos:', error);
-    }
-  };
 
   const getFavorites = async (): Promise<Recipe[]> => {
     try {
       const jsonValue = await AsyncStorage.getItem(FAVORITES_KEY);
       return jsonValue != null ? JSON.parse(jsonValue) : [];
-    } catch (e) {
-      console.error('Erro ao obter favoritos:', e);
+    } catch (error) {
+      console.error('Erro ao obter favoritos:', error);
       return [];
     }
   };
@@ -93,8 +72,8 @@ export const RecipesProvider = ({ children }: PropsWithChildren) => {
         await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
         setFavorites(newFavorites);
       }
-    } catch (e) {
-      console.error('Erro ao salvar favorito:', e);
+    } catch (error) {
+      console.error('Erro ao salvar favorito:', error);
     }
   };
 
@@ -116,8 +95,6 @@ export const RecipesProvider = ({ children }: PropsWithChildren) => {
   return (
     <RecipesContext.Provider
       value={{
-        recipes,
-        favorites,
         fetchAllRecipes,
         searchRecipes,
         getRecipeById,
