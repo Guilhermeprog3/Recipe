@@ -112,4 +112,4 @@ guilhermeprog3/recipe/Recipe-0871b566b92bdf1d969be866e13d741c6e51ce2c/
 
 👤 **Desenvolvedor:** Guilherme Silva Rios  
 🌐 [Portfólio](https://guilhermeriosdev.vercel.app)  
-💻 [GitHub](https://github.com/GuilhermeRiosDev)  
+💻 [GitHub](https://github.com/guilhermeprog3)  
