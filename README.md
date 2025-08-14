@@ -7,11 +7,8 @@ Com uma interface intuitiva e amigável, é possível navegar por uma vasta cole
 
 ## 📱 Telas do Aplicativo
 
-<img src="https://github.com/GuilhermeRiosDev/Recipe/assets/91126653/781b4f4c-1d58-45e0-8451-f761925b6a78" alt="drawing" width="200"/>  
-<img src="https://github.com/GuilhermeRiosDev/Recipe/assets/91126653/399a9a30-ba9e-4c74-884c-352b2123537a" alt="drawing" width="200"/>  
-<img src="https://github.com/GuilhermeRiosDev/Recipe/assets/91126653/c2bb08a0-2f23-4416-9285-d86419572b93" alt="drawing" width="200"/>  
-<img src="https://github.com/GuilhermeRiosDev/Recipe/assets/91126653/305a46ae-e9d6-444a-9398-33519c6e3b2e" alt="drawing" width="200"/>  
-<img src="https://github.com/GuilhermeRiosDev/Recipe/assets/91126653/569f4c3a-86b2-4d0a-9d93-d02e0c07d394" alt="drawing" width="200"/>  
+<img src="./public/inicio.png" alt="drawing" width="200"/>  
+<img src="./public/detalhes.png" alt="drawing" width="200"/>  
 
 ---
 
