@@ -7,8 +7,8 @@ Com uma interface intuitiva e amigável, é possível navegar por uma vasta cole
 
 ## 📱 Telas do Aplicativo
 
-<img src="./public/inicio.png" alt="drawing" width="200"/>  
-<img src="./public/detalhes.png" alt="drawing" width="200"/>  
+<img src="./public/inicio.png" alt="drawing" width="395" height="861"/>  
+<img src="./public/detalhes.png" alt="drawing" width="395" height="861"/>  
 
 ---
 
