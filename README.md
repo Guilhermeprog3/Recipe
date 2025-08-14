@@ -7,8 +7,10 @@ Com uma interface intuitiva e amigável, é possível navegar por uma vasta cole
 
 ## 📱 Telas do Aplicativo
 
-<img src="./public/inicio.png" alt="drawing" width="395" height="861"/>  
-<img src="./public/detalhes.png" alt="drawing" width="395" height="861"/>  
+<div style="display: flex;">
+<img src="./public/inicio.png" alt="Tela Inicial" width="395" height="861" style="margin-right: 10px;"/>
+<img src="./public/detalhes.png" alt="Tela de Detalhes" width="395" height="861"/>
+</div>
 
 ---
 
