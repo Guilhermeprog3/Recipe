@@ -80,7 +80,7 @@ guilhermeprog3/recipe/Recipe-0871b566b92bdf1d969be866e13d741c6e51ce2c/
 
 1. **Clone o repositório**
    ```bash
-   git clone https://github.com/GuilhermeRiosDev/Recipe.git
+   git clone https://github.com/Guilhermeprog3/Recipe.git
    ```
 
 2. **Acesse o diretório**
